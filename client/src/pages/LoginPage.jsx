@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext'; 
+
+// Handles deployment vs local automatically
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 function LoginPage() {
@@ -18,16 +20,20 @@ function LoginPage() {
         setError('');
         setLoading(true);
 
-        const apiUrl = 'http://localhost:5001/api/auth/login'; 
-
         try {
-const response = await axios.post(`${API_BASE_URL}/api/auth/signup`, formData);
+            // FIX 1: Send to /api/auth/login (not signup)
+            // FIX 2: Send { email, password } directly instead of undefined formData
+            const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
+                email,
+                password
+            });
 
-            
-            login(response.data.token, response.data.user);
-
-            setLoading(false);
-            navigate('/dashboard'); 
+            // FIX 3: Ensure the order matches your context (usually user first, then token)
+            if (response.data.success) {
+                login(response.data.user, response.data.token);
+                setLoading(false);
+                navigate('/dashboard'); 
+            }
 
         } catch (err) {
             console.error('Login failed:', err.response ? err.response.data : err.message);
@@ -49,9 +55,7 @@ const response = await axios.post(`${API_BASE_URL}/api/auth/signup`, formData);
                 <form onSubmit={handleSubmit}>
                     {error && <p style={{ color: 'red', textAlign: 'center', marginBottom: '1rem' }}>{error}</p>}
                     <div className="form-group">
-                        <label className="form-label" htmlFor="login-email"> {/* Changed id */}
-                            Email
-                        </label>
+                        <label className="form-label" htmlFor="login-email">Email</label>
                         <input
                             type="email"
                             id="login-email" 
@@ -64,16 +68,14 @@ const response = await axios.post(`${API_BASE_URL}/api/auth/signup`, formData);
                         />
                     </div>
                     <div className="form-group">
-                        <label className="form-label" htmlFor="login-password"> {/* Changed id */}
-                            Password
-                        </label>
+                        <label className="form-label" htmlFor="login-password">Password</label>
                         <input
                             type="password"
-                            id="login-password" // Changed id
+                            id="login-password"
                             name="password"
                             className="form-input"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)} // Direct state update
+                            onChange={(e) => setPassword(e.target.value)}
                             required
                             disabled={loading}
                         />
@@ -83,10 +85,7 @@ const response = await axios.post(`${API_BASE_URL}/api/auth/signup`, formData);
                         {loading ? 'Logging In...' : 'Log In'}
                     </button>
                 </form>
-                <Link to="/" className="back-link">
-                    Back to Home
-                </Link>
-                {/* Optional: Link to Signup */}
+                <Link to="/" className="back-link">Back to Home</Link>
                 <p style={{ textAlign: 'center', marginTop: '1rem' }}>
                     Don't have an account? <Link to="/signup" style={{ color: '#2563eb', fontWeight: '600' }}>Sign Up</Link>
                 </p>
