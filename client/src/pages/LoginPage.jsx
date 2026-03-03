@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext'; 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 function LoginPage() {
     const [email, setEmail] = useState('');
@@ -20,7 +21,7 @@ function LoginPage() {
         const apiUrl = 'http://localhost:5001/api/auth/login'; 
 
         try {
-            const response = await axios.post(apiUrl, { email, password });
+const response = await axios.post(`${API_BASE_URL}/api/auth/signup`, formData);
 
             
             login(response.data.token, response.data.user);

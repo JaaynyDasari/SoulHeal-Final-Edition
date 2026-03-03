@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 function SignupPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,7 +28,7 @@ function SignupPage() {
         const apiUrl = 'http://localhost:5001/api/auth/signup'; // Your backend URL
 
         try {
-            const response = await axios.post(apiUrl, { email, password });
+const response = await axios.post(`${API_BASE_URL}/api/auth/signup`, formData);
 
             setSuccess(response.data.message + ' Redirecting to login...'); // Show success message
             setLoading(false);
