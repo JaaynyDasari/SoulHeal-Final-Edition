@@ -24,7 +24,8 @@ const app = express();
 // Enable CORS
 const allowedOrigins = [
     'http://localhost:3006',
-    'http://127.0.0.1:3006'
+    'http://127.0.0.1:3006',
+    'https://soul-heal-final-edition-tc5e.vercel.app/'
 ];
 if (process.env.FRONTEND_URL) {
     allowedOrigins.push(process.env.FRONTEND_URL);
